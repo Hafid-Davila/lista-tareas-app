@@ -1,15 +1,28 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import os
 
+app = Flask(
+    __name__,
+    static_folder="../frontend/dist",  # Carpeta donde Vite guarda el build
+    static_url_path=""
+)
 
-app = Flask(__name__)
-
-# Configuración de la base de datos SQLite
+# Configuración base de datos
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+
+with app.app_context():
+    db.create_all()
+
+# Ruta para servir React (index.html)
+@app.route("/")
+def serve_react():
+    return send_from_directory(app.static_folder, "index.html")
+
 
 # Modelo de datos
 class Task(db.Model):
