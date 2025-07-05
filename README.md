@@ -1,14 +1,14 @@
-# 📝 Lista de Tareas - App de Escritorio (React + Flask + SQLite)
 
-Una aplicación local para gestionar tareas, construida como proyecto de aprendizaje usando **React** para el frontend, **Flask** para el backend, y **SQLite** como base de datos local.
+# 📝 Lista de Tareas - App de Escritorio
 
----
+Esta es una aplicación de lista de tareas construida con **React + Flask + Electron**. Funciona completamente **offline** en tu computadora con Windows.
 
-## 📦 Tecnologías utilizadas
+## Tecnologías usadas
 
-- **Frontend:** React (Create React App o Vite)
-- **Backend:** Python + Flask + Flask-SQLAlchemy
-- **Base de datos:** SQLite (archivo local)
+- 🔵 React (frontend)
+- 🐍 Flask (API REST y servidor)
+- ⚡ Vite (empaquetado)
+- 🖥️ Electron (para convertirla en app de escritorio)
 
 ---
 
@@ -22,77 +22,49 @@ Una aplicación local para gestionar tareas, construida como proyecto de aprendi
 
 ---
 
-## 🗂️ Estructura del proyecto
+## Instrucciones para correr el proyecto localmente
 
-```
-lista-tareas-app/
-├── backend/
-│   ├── app.py
-│   ├── tasks.db
-│   ├── requirements.txt
-│   └── ...
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   └── ...
-└── README.md
-```
-
----
-
-## 🔧 Cómo ejecutar el proyecto localmente
-
-### 1. Clonar el repositorio
-
-```bash
-git clone https://github.com/tu-usuario/lista-tareas-app.git
-cd lista-tareas-app
-```
-
-### 2. Backend (Flask)
-
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate  # En Windows
-pip install -r requirements.txt
-python app.py
-```
-
-El backend se ejecutará en: `http://127.0.0.1:5000`
-
-### 3. Frontend (React)
+### 1. Instalar dependencias
 
 ```bash
 cd frontend
 npm install
-npm run dev    # o npm start si usas CRA
-```
 
-El frontend se ejecutará en: `http://localhost:5173` (o el puerto que indique Vite)
+cd ../backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
 
 ---
 
-## 📁 Archivo `.gitignore`
+### 2. Build del frontend
 
-Asegúrate de incluir lo siguiente para mantener tu repo seguro y limpio:
-
-```
-# Python
-venv/
-tasks.db
-__pycache__/
-
-# Node
-node_modules/
-dist/
-build/
-
-# Editor
-.vscode/
-.DS_Store
+```bash
+cd frontend
+npm run build
 ```
 
+---
+
+### 3. Ejecutar Flask (backend)
+
+```bash
+cd ../backend
+python app.py
+```
+
+Accede a la app en `http://localhost:5000`.
+
+---
+
+### 4. Lanzar como app de escritorio
+
+```bash
+cd ../frontend
+npm run start:electron
+```
+
+Esto abrirá una ventana de escritorio con la app funcionando offline. 
 
 ## 📚 Créditos
 
