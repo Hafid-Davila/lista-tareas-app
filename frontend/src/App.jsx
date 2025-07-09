@@ -87,48 +87,50 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Lista de Tareas</h1>
-      <div className="form">
-        <input
-          type="text"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          placeholder="Nueva tarea"
-        />
-        <button onClick={crearTarea}>Agregar</button>
+      <div className="contenedor">
+        <h1>Lista de Tareas</h1>
+        <div className="form">
+          <input
+            type="text"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            placeholder="Nueva tarea"
+          />
+          <button onClick={crearTarea}>Agregar</button>
+        </div>
+        <ul>
+          {tasks.map((task) => (
+            <li key={task.id} className={task.completed ? "done" : ""}>
+              {editTaskId === task.id ? (
+                <>
+                  <input
+                    type="text"
+                    value={editDescription}
+                    onChange={(e) => setEditDescription(e.target.value)}
+                  />
+                  <button onClick={() => guardarEdicion(task)}>Guardar</button>
+                </>
+              ) : (
+                <span onDoubleClick={() => startEditing(task)}>
+                  {task.description}
+                </span>
+              )}
+              <div className="timestamps">
+                <small>Creada: {new Date(task.created_at).toLocaleString()}</small><br />
+                <small>Última mod: {new Date(task.updated_at).toLocaleString()}</small>
+              </div>
+              <div className="acciones">
+                <button id="completed" onClick={() => toggleTarea(task)}>
+                  {task.completed ? "Marcar como pendiente" : "Marcar como completada"}
+                </button>
+                <button id="delete" onClick={() => eliminarTarea(task)} style={{ marginLeft: "8px" }}>
+                  🗑 Eliminar
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id} className={task.completed ? "done" : ""}>
-            {editTaskId === task.id ? (
-              <>
-                <input
-                  type="text"
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                />
-                <button onClick={() => guardarEdicion(task)}>Guardar</button>
-              </>
-            ) : (
-              <span onDoubleClick={() => startEditing(task)}>
-                {task.description}
-              </span>
-            )}
-            <div className="timestamps">
-              <small>Creada: {new Date(task.created_at).toLocaleString()}</small><br />
-              <small>Última mod: {new Date(task.updated_at).toLocaleString()}</small>
-            </div>
-            <div className="acciones">
-              <button onClick={() => toggleTarea(task)}>
-                {task.completed ? "Marcar como pendiente" : "Marcar como completada"}
-              </button>
-              <button onClick={() => eliminarTarea(task)} style={{ marginLeft: "8px" }}>
-                🗑 Eliminar
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
