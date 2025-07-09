@@ -1,19 +1,16 @@
-// Paso 4.c - Verificación de cambios en App.jsx
-
 import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
+  const [editTaskId, setEditTaskId] = useState(null);
+  const [editDescription, setEditDescription] = useState("");
 
   useEffect(() => {
     fetch("/tasks")
       .then((res) => res.json())
-      .then((data) => {
-        const ordenadas = ordenarTareas(data);
-        setTasks(ordenadas);
-      });
+      .then((data) => setTasks(ordenarTareas(data)));
   }, []);
 
   const ordenarTareas = (lista) => {
@@ -28,7 +25,7 @@ function App() {
     fetch("/tasks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ description: newTask }),
+      body: JSON.stringify({ description: newTask })
     })
       .then((res) => res.json())
       .then((task) => {
@@ -41,7 +38,7 @@ function App() {
     fetch(`/tasks/${task.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ completed: !task.completed }),
+      body: JSON.stringify({ completed: !task.completed })
     })
       .then((res) => res.json())
       .then((updated) => {
@@ -49,6 +46,42 @@ function App() {
           t.id === updated.id ? updated : t
         );
         setTasks(ordenarTareas(actualizadas));
+      });
+  };
+
+  const eliminarTarea = (task) => {
+    const confirmacion = window.confirm("¿Estás seguro de que quieres borrar esta tarea?");
+    if (!confirmacion) return;
+
+    fetch(`/tasks/${task.id}`, {
+      method: "DELETE"
+    })
+      .then((res) => res.json())
+      .then(() => {
+        const restantes = tasks.filter((t) => t.id !== task.id);
+        setTasks(ordenarTareas(restantes));
+      });
+  };
+
+  const startEditing = (task) => {
+    setEditTaskId(task.id);
+    setEditDescription(task.description);
+  };
+
+  const guardarEdicion = (task) => {
+    fetch(`/tasks/${task.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ description: editDescription })
+    })
+      .then((res) => res.json())
+      .then((updated) => {
+        const actualizadas = tasks.map((t) =>
+          t.id === updated.id ? updated : t
+        );
+        setTasks(ordenarTareas(actualizadas));
+        setEditTaskId(null);
+        setEditDescription("");
       });
   };
 
@@ -66,13 +99,33 @@ function App() {
       </div>
       <ul>
         {tasks.map((task) => (
-          <li
-            key={task.id}
-            className={task.completed ? "done" : ""}
-            onClick={() => toggleTarea(task)}
-          >
-            {task.description}
-            <small>{task.completed ? "Completada" : "Pendiente"}</small>
+          <li key={task.id} className={task.completed ? "done" : ""}>
+            {editTaskId === task.id ? (
+              <>
+                <input
+                  type="text"
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                />
+                <button onClick={() => guardarEdicion(task)}>Guardar</button>
+              </>
+            ) : (
+              <span onDoubleClick={() => startEditing(task)}>
+                {task.description}
+              </span>
+            )}
+            <div className="timestamps">
+              <small>Creada: {new Date(task.created_at).toLocaleString()}</small><br />
+              <small>Última mod: {new Date(task.updated_at).toLocaleString()}</small>
+            </div>
+            <div className="acciones">
+              <button onClick={() => toggleTarea(task)}>
+                {task.completed ? "Marcar como pendiente" : "Marcar como completada"}
+              </button>
+              <button onClick={() => eliminarTarea(task)} style={{ marginLeft: "8px" }}>
+                🗑 Eliminar
+              </button>
+            </div>
           </li>
         ))}
       </ul>

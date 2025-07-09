@@ -1,30 +1,21 @@
 from flask import Flask, request, jsonify, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import os
 
 app = Flask(
     __name__,
-    static_folder="../frontend/dist",  # Carpeta donde Vite guarda el build
+    static_folder="../frontend/dist",
     static_url_path=""
 )
 
-# Configuración base de datos
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///tasks.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 
-with app.app_context():
-    db.create_all()
+def current_time():
+    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-# Ruta para servir React (index.html)
-@app.route("/")
-def serve_react():
-    return send_from_directory(app.static_folder, "index.html")
-
-
-# Modelo de datos
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(200), nullable=False)
@@ -43,24 +34,18 @@ class Task(db.Model):
             'completed': self.completed
         }
 
-
-# Helper para obtener timestamp actual 
-def current_time():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-
-# Crear la base de datos (solo se hace una vez)
 with app.app_context():
     db.create_all()
 
+@app.route("/")
+def serve_react():
+    return send_from_directory(app.static_folder, "index.html")
 
-# Rutas API
-@app.route("/task", methods=["GET"])
-def get_task():
+@app.route("/tasks", methods=["GET"])
+def get_tasks():
     tasks = Task.query.order_by(Task.completed.asc()).all()
     return jsonify([t.to_dict() for t in tasks])
 
-# Ruta para crear una nueva tarea
 @app.route("/tasks", methods=["POST"])
 def create_task():
     data = request.get_json()
@@ -73,7 +58,6 @@ def create_task():
     db.session.commit()
     return jsonify(task.to_dict()), 201
 
-# Ruta para actualizar una tarea (marcar completada, editar descripción, etc.)
 @app.route("/tasks/<int:task_id>", methods=["PUT"])
 def update_task(task_id):
     task = Task.query.get(task_id)
@@ -83,15 +67,16 @@ def update_task(task_id):
     data = request.get_json()
     if "description" in data:
         task.description = data["description"]
+        task.updated_at = current_time()
+
     if "completed" in data:
         task.completed = data["completed"]
-        task.completed_at = current_time() if data["completed"] else None
-    task.updated_at = current_time()
+        task.completed_at = current_time() if task.completed else None
+        task.updated_at = current_time()
 
     db.session.commit()
     return jsonify(task.to_dict())
 
-# Ruta para eliminar una tarea
 @app.route("/tasks/<int:task_id>", methods=["DELETE"])
 def delete_task(task_id):
     task = Task.query.get(task_id)
@@ -104,5 +89,3 @@ def delete_task(task_id):
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-
