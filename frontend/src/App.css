@@ -1,42 +1,76 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
+/* Paso 4.b: Estilo básico para App de tareas */
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f1f1f1;
+  color: #333;
+}
+
+.App {
+  max-width: 600px;
+  margin: 40px auto;
+  background: #fff;
   padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h1 {
   text-align: center;
+  color: #0077cc;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+input {
+  flex: 1;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+button {
+  padding: 10px 14px;
+  background-color: #0077cc;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.card {
-  padding: 2em;
+button:hover {
+  background-color: #005fa3;
 }
 
-.read-the-docs {
-  color: #888;
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background: #f9f9f9;
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+li.done {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+small {
+  font-size: 0.75rem;
+  color: #666;
 }
